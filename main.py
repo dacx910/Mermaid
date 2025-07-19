@@ -131,7 +131,7 @@ class BanConfirmationView(View):
     @discord.ui.button(label="Run Audit on User", style=discord.ButtonStyle.blurple)
     async def audit(self, interaction: discord.Interaction, button: Button):
         embed = await general_user_audit(self.user_to_ban)
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
     @discord.ui.button(label="False Positive", style=discord.ButtonStyle.green)
     async def restore(self, interaction: discord.Interaction, button: Button):
         await interaction.message.edit(view=None)
@@ -243,17 +243,23 @@ if __name__ == "__main__":
     client = MyClient(intents=intents)
 
     @client.tree.command(description="Runs a report on all availble info for a particular user")
-    @app_commands.describe(user="User you'd like to audit")
-    @app_commands.default_permissions()
-    async def audit_user(interaction: discord.Interaction, user: discord.User):
+    @app_commands.describe(user="User you'd like to audit", public="Should the results be posted to the channel? Select 'No' if only you want to see the results")
+    @app_commands.choices(public=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)])
+    @app_commands.default_permissions(view_audit_log=True)
+    @app_commands.checks.has_permissions(view_audit_log=True)
+    async def audit_user(interaction: discord.Interaction, user: discord.User, public: int=0):
         embed = await general_user_audit(user)
-        await interaction.response.send_message(embed=embed)
+        if public:
+            await interaction.response.send_message(embed=embed)
+        else:
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @client.tree.command(description="Scans the server for suspicious users")
-    @app_commands.describe(includebots="Add a section for bots in the report", includenobadges="Add a section for users with zero badges/public flags on their profile (HypeSquad, etc.)")
-    @app_commands.choices(includebots=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], includenobadges=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)])
-    @app_commands.default_permissions()
-    async def audit_server(interaction: discord.Interaction, includebots: int, includenobadges: int):
+    @app_commands.describe(includebots="Add a section for bots in the report", includenobadges="Add a section for users with zero badges/public flags on their profile (HypeSquad, etc.)", public="Should the results be posted to the channel? Select 'No' if only you want to see the results")
+    @app_commands.choices(includebots=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], includenobadges=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], public=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)])
+    @app_commands.default_permissions(view_audit_log=True)
+    @app_commands.checks.has_permissions(view_audit_log=True)
+    async def audit_server(interaction: discord.Interaction, includebots: int=0, includenobadges: int=0, public: int=0):
         spammers = []
         bots = []
         nobadges = []
@@ -275,12 +281,15 @@ if __name__ == "__main__":
             embed.add_field(name="Bots:", value=list_to_string(bots), inline=False)
         if includenobadges:
             embed.add_field(name="No Badges:", value=list_to_string(nobadges), inline=False)
-
-        await interaction.response.send_message(embed=embed)
+        if public:
+            await interaction.response.send_message(embed=embed)
+        else:
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @client.tree.command(description="Modify the channel you'd like this bot to send its notifications in")
     @app_commands.describe(channel="The channel you'd like the bot to send its notifications in")
-    @app_commands.default_permissions()
+    @app_commands.default_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def set_mod_log_channel(interaction: discord.Interaction, channel: discord.TextChannel):
         con = sqlite3.connect('main.db')
         cur = con.cursor()
