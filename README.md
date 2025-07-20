@@ -1,5 +1,5 @@
 <h1 align="center">
-<img width="2048" height="512" alt="mermaid_full" src="https://github.com/user-attachments/assets/cff69df8-d385-4d1b-94a7-700732842671" />
+<img width="2048" height="512" alt="mermaid_full" src="https://github.com/user-attachments/assets/209c814d-223c-40fd-bee5-6c89b5f75089" />
 </h1>
 <p align="center"><i>A supplemental Discord bot for moderation, monitoring, and securing servers</i></p>
 <p>There are many (much better) Discord bots that can do moderation, but this is one that I've tailored to my specific use-cases and preferences.
