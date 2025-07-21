@@ -6,6 +6,7 @@ from discord.ui import Button, View
 from base64 import b64decode, b64encode
 import time
 import sqlite3
+from os import path
 
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
@@ -20,7 +21,7 @@ def log(message: str):
         print(f"<{time.asctime()}> {message[:97]}...")
     else:
         print(fmessage, end="")
-    with open("logs/latest.log", "a") as f:
+    with open(f"{path.abspath(path.dirname(__file__))}/logs/latest.log", "a") as f:
         try:
             f.write(fmessage)
         except Exception as e:
