@@ -3,21 +3,29 @@ import discord
 from discord.ext import tasks
 from discord import app_commands
 from discord.ui import Button, View
+from base64 import b64decode, b64encode
 import time
 import sqlite3
 
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
         return "FreeMacbook"
-    if ("ticket" in message.lower() and ("dm" in message.lower() or "text" in message.lower()) and "sell" in message.lower()):
+    if (("ticket" in message.lower() or "seat" in message.lower()) and ("dm" in message.lower() or "text" in message.lower())):
         return "TicketSeller"
     return ""
 
 def log(message: str):
-    message = f"<{time.asctime()}> {message}\n"
-    print(message, end="")
+    fmessage = f"<{time.asctime()}> {message}\n"
+    if (len(message) > 100):
+        print(f"<{time.asctime()}> {message[:97]}...")
+    else:
+        print(fmessage, end="")
     with open("logs/latest.log", "a") as f:
-        f.write(message)
+        try:
+            f.write(fmessage)
+        except Exception as e:
+            f.write(f"<{time.asctime()}> Error: {e}, writing message as base64\n")
+            f.write(f"<{time.asctime()}> {b64encode(message.encode()).decode('utf-8')}\n")
         f.close()
 
 async def find_mod_channel(guild: discord.Guild) -> discord.TextChannel:
@@ -31,7 +39,12 @@ async def mod_log(guild: discord.Guild, message: str, invokeActions: bool = Fals
     mod_channel: discord.TextChannel
     
     embedMessage = discord.Embed(title=f"Automated Action: <{time.asctime()}>", color=discord.Color(0x80c1c2))
-    embedMessage.add_field(name="Message:", value=message)
+    
+    if (len(message) > 1020):
+        embedMessage.add_field(name="Message:", value=f"{message[:1019]}```", inline=False)
+        embedMessage.add_field(name="**TRUNCATED FOR LENGTH**", value='​', inline=False)
+    else:
+        embedMessage.add_field(name="Message:", value=message)
 
     con = sqlite3.connect('main.db')
     cur = con.cursor()
