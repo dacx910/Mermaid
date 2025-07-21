@@ -7,7 +7,8 @@ from base64 import b64decode, b64encode
 import time
 import sqlite3
 from os import path
-from sys import stderr
+import logging
+logger = logging.getLogger('discord')
 
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
@@ -19,9 +20,11 @@ def isBadMessage(message: str) -> str:
 def log(message: str):
     fmessage = f"<{time.asctime()}> {message}\n"
     if (len(message) > 100):
-        print(f"<{time.asctime()}> {message[:97]}...", file=stderr)
+        # print(f"<{time.asctime()}> {message[:97]}...", file=stderr)
+        logger.info(f"{message:97}...")
     else:
-        print(fmessage, end="", file=stderr)
+        # print(fmessage, end="", file=stderr)
+        logger.info(fmessage)
     with open(f"{path.abspath(path.dirname(__file__))}/logs/latest.log", "a") as f:
         try:
             f.write(fmessage)
