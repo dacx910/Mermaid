@@ -268,32 +268,29 @@ if __name__ == "__main__":
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @client.tree.command(description="Scans the server for suspicious users")
-    @app_commands.describe(includebots="Add a section for bots in the report", includenobadges="Add a section for users with zero badges/public flags on their profile (HypeSquad, etc.)", public="Should the results be posted to the channel? Select 'No' if only you want to see the results")
-    @app_commands.choices(includebots=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], includenobadges=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], public=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)])
+    @app_commands.describe(includebots="Add a section for bots in the report", public="Should the results be posted to the channel? Select 'No' if only you want to see the results")
+    @app_commands.choices(includebots=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)], public=[app_commands.Choice(name="Yes", value=1), app_commands.Choice(name="No", value=0)])
     @app_commands.default_permissions(view_audit_log=True)
     @app_commands.checks.has_permissions(view_audit_log=True)
-    async def audit_server(interaction: discord.Interaction, includebots: int=0, includenobadges: int=0, public: int=0):
+    async def audit_server(interaction: discord.Interaction, includebots: int=0, public: int=0):
         spammers = []
         bots = []
-        nobadges = []
 
         guild = interaction.guild
         async for member in guild.fetch_members():
             flags = member.public_flags
             if flags.spammer: spammers.append(f"<@{member.id}>")
             if includebots and (flags.verified_bot or flags.bot_http_interactions or member.bot): bots.append(f"<@{member.id}>")
-            if includenobadges and flags.value == 0: nobadges.append(f"<@{member.id}>")
         embed = discord.Embed(title=f"Server Audit for {interaction.guild.name}", color=discord.Color(0x80c1c2))
         try:
             guild_icon_url = interaction.guild.icon.url
         except:
             guild_icon_url = None
         embed.set_thumbnail(url=guild_icon_url)
-        embed.add_field(name="Spammers:", value=list_to_string(spammers), inline=False)
+
+        embed.add_field(name="Spammers:", value=list_to_string(spammers)[:1023], inline=False)
         if includebots:
-            embed.add_field(name="Bots:", value=list_to_string(bots), inline=False)
-        if includenobadges:
-            embed.add_field(name="No Badges:", value=list_to_string(nobadges), inline=False)
+            embed.add_field(name="Bots:", value=list_to_string(bots)[:1023], inline=False)
         if public:
             await interaction.response.send_message(embed=embed)
         else:
