@@ -7,6 +7,7 @@ from base64 import b64decode, b64encode
 import time
 import sqlite3
 from os import path
+from sys import stderr
 
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
@@ -18,9 +19,9 @@ def isBadMessage(message: str) -> str:
 def log(message: str):
     fmessage = f"<{time.asctime()}> {message}\n"
     if (len(message) > 100):
-        print(f"<{time.asctime()}> {message[:97]}...")
+        print(f"<{time.asctime()}> {message[:97]}...", file=stderr)
     else:
-        print(fmessage, end="")
+        print(fmessage, end="", file=stderr)
     with open(f"{path.abspath(path.dirname(__file__))}/logs/latest.log", "a") as f:
         try:
             f.write(fmessage)
