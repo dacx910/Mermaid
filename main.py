@@ -24,7 +24,7 @@ def log(message: str):
         logger.info(f"{message:97}...")
     else:
         # print(fmessage, end="", file=stderr)
-        logger.info(fmessage)
+        logger.info(message)
     with open(f"{path.abspath(path.dirname(__file__))}/logs/latest.log", "a") as f:
         try:
             f.write(fmessage)
