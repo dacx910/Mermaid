@@ -125,7 +125,7 @@ class BanConfirmationView(View):
         super().__init__()
         self.user_to_ban = user_to_ban
 
-    @discord.ui.button(label="Ban", style=discord.ButtonStyle.danger)
+    @discord.ui.button(label="Ban", style=discord.ButtonStyle.danger, timeout=None)
     async def confirm_ban(self, interaction: discord.Interaction, button: Button):
         if (interaction.user.guild_permissions.ban_members):
             try:
@@ -138,7 +138,7 @@ class BanConfirmationView(View):
             await interaction.message.edit(view=None)
         else:
             await interaction.response.send_message("You do not have permission to ban users", ephemeral=True)
-    @discord.ui.button(label="Kick", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="Kick", style=discord.ButtonStyle.red, timeout=None)
     async def kick(self, interaction: discord.Interaction, button: Button):
         if (interaction.user.guild_permissions.kick_members):
             await self.user_to_ban.kick()
@@ -146,11 +146,11 @@ class BanConfirmationView(View):
             await interaction.message.edit(view=None)
         else:
             await interaction.response.send_message("You do not have permission to kick users", ephemeral=True)
-    @discord.ui.button(label="Run Audit on User", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Run Audit on User", style=discord.ButtonStyle.blurple, timeout=None)
     async def audit(self, interaction: discord.Interaction, button: Button):
         embed = await general_user_audit(self.user_to_ban)
         await interaction.response.send_message(embed=embed, ephemeral=True)
-    @discord.ui.button(label="False Positive", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="False Positive", style=discord.ButtonStyle.green, timeout=None)
     async def restore(self, interaction: discord.Interaction, button: Button):
         await interaction.message.edit(view=None)
         await interaction.response.send_message(f"Marked as a false positive by {interaction.user.mention}")
