@@ -109,7 +109,10 @@ async def general_user_audit(user: discord.User) -> discord.Embed:
     if flagList.endswith(", "): flagList = flagList[:-2]
 
     embed = discord.Embed(title=f"User Audit for {user.name}", color=discord.Color(0x80c1c2))
-    embed.set_thumbnail(url=user.avatar.url)
+    try:
+        embed.set_thumbnail(url=user.avatar.url)
+    except:
+        embed.set_thumbnail(url=None)
     embed.add_field(name="ID:", value=user.id, inline=False)
     embed.add_field(name="Creation Date & Time:", value=user.created_at, inline=False)
     embed.add_field(name="Is Bot:", value=user.bot, inline=False)
