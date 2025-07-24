@@ -13,7 +13,7 @@ logger = logging.getLogger('discord')
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
         return "FreeMacbook"
-    if (("ticket" in message.lower() or "seat" in message.lower()) and ("dm" in message.lower() or "text" in message.lower())):
+    if (("ticket" in message.lower() or "seat" in message.lower()) and ("dm" in message.lower() or "text" in message.lower() or "message" in message.lower())):
         return "TicketSeller"
     return ""
 
