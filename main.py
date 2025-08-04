@@ -13,9 +13,9 @@ logger = logging.getLogger('discord')
 def isBadMessage(message: str) -> str:
     if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
         return "FreeMacbook"
-    if ("macbook air 2020" in message.lower()):
+    if ("macbook air 2020" in message.lower() and ("dm" in message.lower() or "text" in message.lower())):
         return "FreeMacbook"
-    if (("ticket" in message.lower() or "seat" in message.lower() or "tixs" in message.lower()) and ("dm" in message.lower() or "text" in message.lower() or "message" in message.lower())):
+    if (("ticket" in message.lower() or "seat" in message.lower() or "tix" in message.lower()) and ("dm" in message.lower() or "text" in message.lower() or "message" in message.lower())):
         return "TicketSeller"
     return ""
 
@@ -137,9 +137,10 @@ class BanConfirmationView(View):
                 await self.user_to_ban.ban()
                 await interaction.response.send_message(f"{self.user_to_ban.name} has been banned. Actioner: {interaction.user.mention}")
             except discord.Forbidden:
-                await interaction.response.send_message("Bot does not have permission to ban this user")
+                await interaction.response.send_message("Bot does not have permission to ban this user", ephemeral=True)
             except Exception as e:
-                await interaction.response.send_message(f"An error occurred: {e}")
+                await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
+                log(e)
             await interaction.message.edit(view=None)
         else:
             await interaction.response.send_message("You do not have permission to ban users", ephemeral=True)
@@ -201,7 +202,7 @@ class MyClient(discord.Client):
             if (cur.execute("SELECT guild_id FROM invites WHERE code=?", [code]).fetchone() == None):
                 cur.execute("INSERT INTO invites (guild, guild_id, code, num_uses) VALUES(?,?,?,?)", (guild_name, guild_id, code, uses))
                 if (uses >= 1):
-                    await mod_log(member.guild, f"User <@{member.id}> joined using code {code} created by <@{invite.inviter.id}>", True, member)
+                    await mod_log(member.guild, f"User <@{member.id}> joined using code {code} created by {invite.inviter.name}", True, member)
             else:
                 stored_uses = cur.execute("SELECT num_uses FROM invites WHERE guild=? AND guild_id=? AND code=?", (guild_name, guild_id, code)).fetchone()[0]
                 if (stored_uses == uses):
