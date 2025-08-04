@@ -17,6 +17,8 @@ def isBadMessage(message: str) -> str:
         return "FreeMacbook"
     if (("ticket" in message.lower() or "seat" in message.lower() or "tix" in message.lower()) and ("dm" in message.lower() or "text" in message.lower() or "message" in message.lower())):
         return "TicketSeller"
+    if (("for sale" in message.lower() or "selling" in message.lower()) and ("dm" in message.lower() or "message" in message.lower or "text" in message.lower())):
+        return "Salesman"
     return ""
 
 def log(message: str):
