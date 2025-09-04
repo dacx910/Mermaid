@@ -11,14 +11,17 @@ import logging
 logger = logging.getLogger('discord')
 
 def isBadMessage(message: str) -> str:
-    if ("strictly first come first serve" in message.lower() and ("DM" in message.upper() or "text" in message.lower())):
+    l_message = message.lower()
+    if ("strictly first come first serve" in l_message and ("dm" in l_message or "text" in l_message)):
         return "FreeMacbook"
-    if ("macbook air 2020" in message.lower() and ("dm" in message.lower() or "text" in message.lower())):
+    if ("macbook air 2020" in l_message and ("dm" in l_message or "text" in l_message)):
         return "FreeMacbook"
-    if (("ticket" in message.lower() or "seat" in message.lower() or "tix" in message.lower()) and ("dm" in message.lower() or "text" in message.lower() or "message" in message.lower())):
+    if (("ticket" in l_message or "seat" in l_message or "tix" in l_message) and ("dm" in l_message or "text" in l_message or "message" in l_message)):
         return "TicketSeller"
-    if (("for sale" in message.lower() or "selling" in message.lower()) and ("dm" in message.lower() or "message" in message.lower or "text" in message.lower())):
+    if (("for sale" in l_message or "selling" in l_message) and ("dm" in l_message or "message" in l_message or "text" in l_message)):
         return "Salesman"
+    if (("giveaway" in l_message or "giving away" in l_message or "free" in l_message) and ("reach out" in l_message or "message" in l_message or "dm" in l_message))
+        return "GiveawayScam"
     return ""
 
 def log(message: str):
