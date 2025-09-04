@@ -20,7 +20,7 @@ def isBadMessage(message: str) -> str:
         return "TicketSeller"
     if (("for sale" in l_message or "selling" in l_message) and ("dm" in l_message or "message" in l_message or "text" in l_message)):
         return "Salesman"
-    if (("giveaway" in l_message or "giving away" in l_message or "free" in l_message) and ("reach out" in l_message or "message" in l_message or "dm" in l_message))
+    if (("giveaway" in l_message or "giving away" in l_message or "free" in l_message) and ("reach out" in l_message or "message" in l_message or "dm" in l_message)):
         return "GiveawayScam"
     return ""
 
